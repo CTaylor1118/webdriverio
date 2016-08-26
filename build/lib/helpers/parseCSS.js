@@ -78,6 +78,10 @@ var parse = function parse(cssPropertyValue, cssProperty) {
 var parseCSS = function parseCSS(response, cssProperty) {
     var parsedCSS = [];
 
+    if (!Array.isArray(response)) {
+        response = [response];
+    }
+
     var _iteratorNormalCompletion = true;
     var _didIteratorError = false;
     var _iteratorError = undefined;

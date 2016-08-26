@@ -253,6 +253,12 @@ var RequestHandler = function () {
                         return reject(new _ErrorHandler.RuntimeError(body));
                     }
 
+                    var data = {
+                        requestOptions: fullRequestOptions,
+                        err: err,
+                        body: body
+                    };
+
                     if (body) {
                         var error = {
                             status: body.status,
@@ -265,6 +271,8 @@ var RequestHandler = function () {
                         if (screenshot) {
                             error.screenshot = screenshot;
                         }
+
+                        _this2.eventHandler.emit('error', data);
 
                         return reject(new _ErrorHandler.RuntimeError(error));
                     }
@@ -283,6 +291,8 @@ var RequestHandler = function () {
                                 orgStatusMessage: 'Couldn\'t connect to selenium server'
                             });
                         }
+
+                        _this2.eventHandler.emit('error', data);
 
                         return reject(_error);
                     }

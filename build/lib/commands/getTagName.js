@@ -8,10 +8,6 @@ var _getIterator2 = require('babel-runtime/core-js/get-iterator');
 
 var _getIterator3 = _interopRequireDefault(_getIterator2);
 
-var _promise = require('babel-runtime/core-js/promise');
-
-var _promise2 = _interopRequireDefault(_promise);
-
 var _ErrorHandler = require('../utils/ErrorHandler');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -53,12 +49,7 @@ var getTagName = function getTagName(selector) {
             }
         }
 
-        return _promise2.default.all(elementIdNameCommands);
-    }).then(function (tagNames) {
-        tagNames = tagNames.map(function (tagName) {
-            return tagName.value.toLowerCase();
-        });
-        return tagNames.length === 1 ? tagNames[0] : tagNames;
+        return _this.unify(elementIdNameCommands, { extractValue: true, lowercase: true });
     });
 }; /**
     *

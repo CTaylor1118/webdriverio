@@ -8,10 +8,6 @@ var _getIterator2 = require('babel-runtime/core-js/get-iterator');
 
 var _getIterator3 = _interopRequireDefault(_getIterator2);
 
-var _promise = require('babel-runtime/core-js/promise');
-
-var _promise2 = _interopRequireDefault(_promise);
-
 var _parseCSS = require('../helpers/parseCSS.js');
 
 var _parseCSS2 = _interopRequireDefault(_parseCSS);
@@ -135,7 +131,7 @@ var getCssProperty = function getCssProperty(selector, cssProperty) {
             }
         }
 
-        return _promise2.default.all(elementIdCssPropertyCommands);
+        return _this.unify(elementIdCssPropertyCommands);
     }).then(function (result) {
         return (0, _parseCSS2.default)(result, cssProperty);
     });

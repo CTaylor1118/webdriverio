@@ -8,10 +8,6 @@ var _getIterator2 = require('babel-runtime/core-js/get-iterator');
 
 var _getIterator3 = _interopRequireDefault(_getIterator2);
 
-var _promise = require('babel-runtime/core-js/promise');
-
-var _promise2 = _interopRequireDefault(_promise);
-
 var _ErrorHandler = require('../utils/ErrorHandler');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -53,7 +49,7 @@ var getLocationInView = function getLocationInView(selector, prop) {
             }
         }
 
-        return _promise2.default.all(elementIdLocationInViewCommands);
+        return _this.unify(elementIdLocationInViewCommands, { extractValue: true });
     }).then(function (locations) {
         locations = locations.map(function (location) {
             if (typeof prop === 'string' && prop.match(/(x|y)/)) {

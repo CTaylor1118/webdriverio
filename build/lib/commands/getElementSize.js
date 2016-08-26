@@ -8,10 +8,6 @@ var _getIterator2 = require('babel-runtime/core-js/get-iterator');
 
 var _getIterator3 = _interopRequireDefault(_getIterator2);
 
-var _promise = require('babel-runtime/core-js/promise');
-
-var _promise2 = _interopRequireDefault(_promise);
-
 var _ErrorHandler = require('../utils/ErrorHandler');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -51,7 +47,7 @@ var getElementSize = function getElementSize(selector, prop) {
             }
         }
 
-        return _promise2.default.all(elementIdSizeCommands);
+        return this.unify(elementIdSizeCommands, { extractValue: true });
     }).then(function (sizes) {
         sizes = sizes.map(function (size) {
             if (typeof prop === 'string' && prop.match(/(width|height)/)) {
