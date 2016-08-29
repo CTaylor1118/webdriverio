@@ -189,6 +189,10 @@ var WebdriverIO = function WebdriverIO(args, modifier) {
             result = result.call(this);
         }
 
+        if (context === undefined) {
+            context = this;
+        }
+
         /**
          * run error handler if command fails
          */
@@ -197,7 +201,10 @@ var WebdriverIO = function WebdriverIO(args, modifier) {
                 var _result = result;
 
                 _this.defer.resolve(_promise2.default.all(_errorHandler2.default.map(function (fn) {
-                    return fn.call(context, result);
+                    context.retrying = true;
+                    var ctx = unit();
+                    ctx.defer.resolve();
+                    return fn.call(ctx, result);
                 })).then(function (res) {
                     var handlerResponses = res.filter(function (r) {
                         return typeof r !== 'undefined';
@@ -209,8 +216,12 @@ var WebdriverIO = function WebdriverIO(args, modifier) {
                     if (handlerResponses.length === 0) {
                         return callErrorHandlerAndReject.call(context, _result, onRejected);
                     }
-
-                    return onFulfilled.call(context, handlerResponses[0]);
+                    context.retrying = false;
+                    if (onFulfilled) {
+                        return onFulfilled.call(context, handlerResponses[0]);
+                    } else {
+                        return handlerResponses[0];
+                    }
                 }, function (e) {
                     return callErrorHandlerAndReject.call(context, e, onRejected);
                 }));
@@ -272,7 +283,7 @@ var WebdriverIO = function WebdriverIO(args, modifier) {
             throw err;
         }
 
-        if (this && this.depth !== 0) {
+        if (this && this.depth !== 0 && !this.retrying) {
             onRejectedSafe(err);
             return this.promise;
         }
@@ -436,7 +447,7 @@ var WebdriverIO = function WebdriverIO(args, modifier) {
                  * this will get reached only in standalone mode if the command
                  * fails and doesn't get followed by a then or catch method
                  */
-                return resolve.call(_this3, e, null, null, { depth: 0 });
+                return resolve.call(_this3, e, null, null, _this3);
             });
         };
 
