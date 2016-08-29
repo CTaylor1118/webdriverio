@@ -47,8 +47,11 @@ var getElementSize = function getElementSize(selector, prop) {
             }
         }
 
-        return this.unify(elementIdSizeCommands, { extractValue: true });
+        return this.unify(elementIdSizeCommands);
     }).then(function (sizes) {
+        if (!Array.isArray(sizes)) {
+            sizes = [sizes];
+        }
         sizes = sizes.map(function (size) {
             if (typeof prop === 'string' && prop.match(/(width|height)/)) {
                 return size.value[prop];
