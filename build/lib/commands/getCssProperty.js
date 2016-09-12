@@ -131,7 +131,7 @@ var getCssProperty = function getCssProperty(selector, cssProperty) {
             }
         }
 
-        return _this.unify(elementIdCssPropertyCommands);
+        return _this.unify(elementIdCssPropertyCommands, { extractValue: true });
     }).then(function (result) {
         return (0, _parseCSS2.default)(result, cssProperty);
     });

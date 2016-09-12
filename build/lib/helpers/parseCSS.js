@@ -23,13 +23,13 @@ var _sanitize2 = _interopRequireDefault(_sanitize);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var parse = function parse(cssPropertyValue, cssProperty) {
-    if (!cssPropertyValue || !cssPropertyValue.value) {
+    if (!cssPropertyValue) {
         return null;
     }
 
     var parsedValue = {
         property: cssProperty,
-        value: cssPropertyValue.value.toLowerCase().trim()
+        value: cssPropertyValue.toLowerCase().trim()
     };
 
     if (parsedValue.value.indexOf('rgb') === 0) {
@@ -46,9 +46,9 @@ var parse = function parse(cssPropertyValue, cssProperty) {
         parsedValue.parsed.type = 'color';
         parsedValue.parsed[/[rgba]+/g.exec(color)[0]] = color;
     } else if (parsedValue.property === 'font-family') {
-        var font = (0, _cssValue2.default)(cssPropertyValue.value);
+        var font = (0, _cssValue2.default)(cssPropertyValue);
         var string = parsedValue.value;
-        var value = cssPropertyValue.value.split(/,/).map(_sanitize2.default.css);
+        var value = cssPropertyValue.split(/,/).map(_sanitize2.default.css);
 
         parsedValue.value = _sanitize2.default.css(font[0].value || font[0].string);
         parsedValue.parsed = { value: value, type: 'font', string: string };
@@ -57,7 +57,7 @@ var parse = function parse(cssPropertyValue, cssProperty) {
          * parse other css properties
          */
         try {
-            parsedValue.parsed = (0, _cssValue2.default)(cssPropertyValue.value);
+            parsedValue.parsed = (0, _cssValue2.default)(cssPropertyValue);
 
             if (parsedValue.parsed.length === 1) {
                 parsedValue.parsed = parsedValue.parsed[0];

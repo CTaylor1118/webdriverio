@@ -51,14 +51,17 @@ var getLocationInView = function getLocationInView(selector, prop) {
 
         return _this.unify(elementIdLocationInViewCommands, { extractValue: true });
     }).then(function (locations) {
+        if (!Array.isArray(locations)) {
+            locations = [locations];
+        }
         locations = locations.map(function (location) {
             if (typeof prop === 'string' && prop.match(/(x|y)/)) {
-                return location.value[prop];
+                return location[prop];
             }
 
             return {
-                x: location.value.x,
-                y: location.value.y
+                x: location.x,
+                y: location.y
             };
         });
 

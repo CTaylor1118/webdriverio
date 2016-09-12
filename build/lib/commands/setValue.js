@@ -4,13 +4,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _getIterator2 = require('babel-runtime/core-js/get-iterator');
-
-var _getIterator3 = _interopRequireDefault(_getIterator2);
-
 var _ErrorHandler = require('../utils/ErrorHandler');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var setValue = function setValue(selector, value) {
     var _this = this;
@@ -26,41 +20,15 @@ var setValue = function setValue(selector, value) {
         throw new _ErrorHandler.CommandError('number or type of arguments don\'t agree with setValue command');
     }
 
-    return this.elements(selector).then(function (res) {
+    return this.element(selector).then(function (res) {
         /**
          * throw NoSuchElement error if no element was found
          */
-        if (!res.value || res.value.length === 0) {
+        if (!res.value) {
             throw new _ErrorHandler.CommandError(7);
         }
 
-        var elementIdValueCommands = [];
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
-
-        try {
-            for (var _iterator = (0, _getIterator3.default)(res.value), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                var elem = _step.value;
-
-                elementIdValueCommands.push(_this.elementIdClear(elem.ELEMENT).elementIdValue(elem.ELEMENT, value));
-            }
-        } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-        } finally {
-            try {
-                if (!_iteratorNormalCompletion && _iterator.return) {
-                    _iterator.return();
-                }
-            } finally {
-                if (_didIteratorError) {
-                    throw _iteratorError;
-                }
-            }
-        }
-
-        return _this.unify(elementIdValueCommands);
+        return _this.elementIdClear(res.value.ELEMENT).elementIdValue(res.value.ELEMENT, value);
     });
 }; /**
     *

@@ -22,8 +22,8 @@ function hasElementResult(result) {
    * check for elements call
    */
   if (result && Array.isArray(result.value) && result.value.filter(function (r) {
-    return !r.ELEMENT;
-  }).length === 0) {
+    return r.ELEMENT;
+  }).length > 0) {
     return 2;
   }
 

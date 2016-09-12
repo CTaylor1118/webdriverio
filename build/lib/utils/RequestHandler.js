@@ -292,8 +292,6 @@ var RequestHandler = function () {
                             });
                         }
 
-                        _this2.eventHandler.emit('error', data);
-
                         return reject(_error);
                     }
 
