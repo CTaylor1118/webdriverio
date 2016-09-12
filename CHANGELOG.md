@@ -1,6 +1,30 @@
 # CHANGELOG
 
-## v4.2.4 (2016-08-11)
+## v4.2.10 (2016-08-31)
+* global changes:
+    * keep command files in package to be able to generate docs
+
+## v4.2.9 (2016-08-31)
+* global changes:
+    * docs improvements
+    * bug fixes
+* WDIO changes:
+    * Split hooks into their own collection instead of grouping with tests (#1561)
+
+## v4.2.8 (2016-08-23)
+* global changes:
+    * allow to specify selector strategies directly when using the format:
+      "<selector strategy>:<selector>"
+
+## v4.2.7 (2016-08-17)
+* fixes broken v4.2.6
+
+## v4.2.6 (2016-08-17)
+* global changes:
+    * restrict files uploaded to NPM
+    * added screenshot event to internal events
+
+## v4.2.5 (2016-08-11)
 * WDIO changes
     * allow spec as wdio argument
 
