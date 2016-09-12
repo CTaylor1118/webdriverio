@@ -4,7 +4,8 @@ describe('drag&drop command test', () => {
          * skip for ie and ff
          * not working anymore
          */
-        if (process.env._BROWSER.match(/(internet_explorer|firefox)/)) {
+
+        if (this.client.desiredCapabilities.browserName.match(/(internet_explorer|firefox)/)) {
             return
         }
 
