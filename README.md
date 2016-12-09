@@ -20,8 +20,7 @@ super easy [Selenium](https://en.wikipedia.org/wiki/Selenium_(software)) tests i
 BDD/TDD test framework, that will run locally or in the cloud using Sauce Labs, BrowserStack or TestingBot.
 
 WebdriverIO is agnostic with regards to the test framework you want to use. Cucumber, Jasmine and Mocha+Chai
-are supported by the configuration wizard, and you can use other frameworks as well - for example
-[Yadda](https://github.com/webdriverio/cucumber-boilerplate).
+are supported by the configuration wizard.
 
 ## Installation
 
@@ -48,6 +47,7 @@ With all that done, have a look at the many [examples](examples/).
 [![Grunt Integration](http://webdriver.io/images/plugins/grunt.png)](https://github.com/webdriverio/grunt-webdriver)
 [![Gulp Integration](http://webdriver.io/images/plugins/gulp.png)](https://github.com/webdriverio/gulp-webdriver)
 [![Sublime Text Plugin](http://webdriver.io/images/plugins/sublime.png)](https://packagecontrol.io/packages/WebdriverIO)
+[![Atom.io Plugin](http://webdriver.io/images/plugins/atom.png)](https://atom.io/packages/webdriverio-snippets)
 [![Visual Regression Testing with Applitools Eyes](http://webdriver.io/images/plugins/applitools.png)](https://github.com/webdriverio/webdrivercss#applitools-eyes-support)
 [![WebRTC Analytics Plugin](http://webdriver.io/images/plugins/webrtc.png)](https://github.com/webdriverio/webdriverrtc)
 

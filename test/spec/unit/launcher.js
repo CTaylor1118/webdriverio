@@ -1,6 +1,7 @@
 import path from 'path'
 import sinon from 'sinon'
 import Launcher from '../../../build/lib/launcher'
+import mock from 'mock-require'
 
 const FIXTURE_ROOT = path.join(__dirname, '..', '..', 'fixtures')
 
@@ -58,14 +59,14 @@ describe('launcher', () => {
 
     it('should assign proper runner ids using getRunnerId', () => {
         let launcher = new Launcher(path.join(FIXTURE_ROOT, 'suite.wdio.conf.js'), {})
-        expect(launcher.getRunnerId(0)).to.be.equal('0a')
-        expect(launcher.getRunnerId(0)).to.be.equal('0b')
-        expect(launcher.getRunnerId(0)).to.be.equal('0c')
-        expect(launcher.getRunnerId(0)).to.be.equal('0d')
-        expect(launcher.getRunnerId(5)).to.be.equal('5a')
-        expect(launcher.getRunnerId(5)).to.be.equal('5b')
-        expect(launcher.getRunnerId(5)).to.be.equal('5c')
-        expect(launcher.getRunnerId(5)).to.be.equal('5d')
+        expect(launcher.getRunnerId(0)).to.be.equal('0-0')
+        expect(launcher.getRunnerId(0)).to.be.equal('0-1')
+        expect(launcher.getRunnerId(0)).to.be.equal('0-2')
+        expect(launcher.getRunnerId(0)).to.be.equal('0-3')
+        expect(launcher.getRunnerId(5)).to.be.equal('5-0')
+        expect(launcher.getRunnerId(5)).to.be.equal('5-1')
+        expect(launcher.getRunnerId(5)).to.be.equal('5-2')
+        expect(launcher.getRunnerId(5)).to.be.equal('5-3')
     })
 
     describe('runSpec', () => {
@@ -161,8 +162,57 @@ describe('launcher', () => {
             launcher.startInstance.callCount.should.be.equal(0)
         })
 
+        it('should stop launching runners after bail number is reached', async () => {
+            launcher = getLauncer({
+                maxInstances: 1,
+                bail: 2
+            }, 5)
+            setTimeout(() => launcher.resolve(0), 10)
+
+            await launcher.run()
+            launcher.startInstance.callCount.should.be.equal(1)
+            launcher.schedule.forEach((cap) => {
+                cap.runningInstances = 0
+                cap.availableInstances = 1
+            })
+
+            launcher.runSpecs().should.be.not.ok
+            launcher.runnerFailed++
+            launcher.schedule.forEach((cap) => {
+                cap.runningInstances = 0
+                cap.availableInstances = 1
+            })
+            launcher.runSpecs().should.be.not.ok
+            launcher.runnerFailed++
+            launcher.schedule.forEach((cap) => {
+                cap.runningInstances = 0
+                cap.availableInstances = 1
+            })
+            launcher.runSpecs().should.be.ok
+        })
+
         afterEach(() => {
             launcher.startInstance.reset()
+        })
+    })
+
+    describe('loads launch services', () => {
+        it('should throw if a service launcher fails', () => {
+            const launcher = path.join(FIXTURE_ROOT, 'services', 'wdio-launcher-failure-service', 'launcher')
+            mock('wdio-launcher-failure-service/launcher', launcher)
+            expect(() => {
+                Launcher.prototype.getLauncher({ services: ['launcher-failure'] })
+            }).to.throw(/Cannot find module 'some-missing-module'/)
+        })
+
+        it('should proceed if the service launcher doesn\'t exist', () => {
+            expect(() => {
+                Launcher.prototype.getLauncher({ services: ['launcher-missing'] })
+            }).to.not.throw(/Cannot find module/)
+        })
+
+        after(() => {
+            mock.stop('wdio-launcher-failure-service/launcher')
         })
     })
 })

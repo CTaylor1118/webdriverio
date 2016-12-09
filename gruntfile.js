@@ -31,7 +31,12 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         pkgFile: 'package.json',
-        clean: ['build'],
+        clean: {
+            build: ['build'],
+            cordova: ['test/site/platforms'],
+            ios: ['test/site/platforms/ios'],
+            android: ['test/site/platforms/android']
+        },
         babel: {
             commands: {
                 files: [{
@@ -131,7 +136,7 @@ module.exports = function (grunt) {
             options: {
                 parser: 'babel-eslint'
             },
-            target: ['lib/**/*.js', 'test/spec', '!test/conf']
+            target: ['lib/**/*.js', 'test/spec', 'test/fixtures', '!test/conf']
         },
         contributors: {
             options: {
@@ -184,19 +189,46 @@ module.exports = function (grunt) {
                     base: './test/site/www'
                 }
             }
+        },
+        cordovacli: {
+            options: {
+                command: ['create', 'platform', 'plugin', 'build'],
+                platforms: ['ios', 'android'],
+                path: 'test/site/www',
+                id: 'io.webdriverio.example',
+                name: 'WebdriverIOGuineaPig'
+            },
+            add_platforms: {
+                options: {
+                    command: 'platform',
+                    action: 'add',
+                    platforms: ['ios', 'android']
+                }
+            },
+            build_ios: {
+                options: {
+                    command: 'build',
+                    platforms: ['ios']
+                }
+            },
+            build_android: {
+                options: {
+                    command: 'build',
+                    platforms: ['android']
+                }
+            }
         }
     })
 
     require('load-grunt-tasks')(grunt)
     grunt.registerTask('default', ['build'])
-    grunt.registerTask('build', 'Build wdio-mocha', function () {
-        grunt.task.run([
-            'eslint',
-            'clean',
-            'babel',
-            'copy'
-        ])
-    })
+    grunt.registerTask('build', 'Build wdio-mocha', ['eslint', 'clean:build', 'babel', 'copy'])
+    grunt.registerTask('buildGuineaPig', [
+        'clean:cordova',
+        'cordovacli:add_platforms',
+        'cordovacli:build_ios',
+        'cordovacli:build_android'
+    ])
     grunt.registerTask('release', 'Bump and tag version', function (type) {
         grunt.task.run([
             'build',
@@ -216,7 +248,7 @@ module.exports = function (grunt) {
             process.env._PLATFORM = 'iOS'
             process.env._VERSION = '9.2'
             process.env._DEVICENAME = 'iPhone 6'
-            process.env._APP = path.join(__dirname, '/test/site/platforms/ios/build/emulator/WebdriverJS Example Phonegap Application.app')
+            process.env._APP = path.join(__dirname, '/test/site/platforms/ios/build/emulator/WebdriverIO Guinea Pig.app')
         } else if (!process.env.CI && env === 'android') {
             process.env._PLATFORM = 'Android'
             process.env._VERSION = '4.4'

@@ -6,4 +6,6 @@ test/site/www/components/
 test/site.zip
 coverage
 .idea
-build
+/*.js
+!gruntfile.js
+!index.js

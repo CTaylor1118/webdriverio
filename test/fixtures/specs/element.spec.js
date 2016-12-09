@@ -102,6 +102,27 @@ describe('element as first class citizen', () => {
         }
     })
 
+    it('element calls within wait commands should not influence following action calls', () => {
+        browser.waitUntil(() => browser.element('body'))
+        let hasThrown = false
+        try {
+            browser.getTagName()
+        } catch (e) {
+            hasThrown = true
+        }
+        expect(hasThrown).to.be.ok
+    })
+
+    it('propagates lastResult for custom commands', () => {
+        browser.addCommand('myTagStructure', function () {
+            const content = this.getText()
+            const tagName = this.getTagName()
+            return `<${tagName}>${content}</${tagName}>`
+        })
+        const header = $('header h1')
+        expect(header.myTagStructure()).to.be.equal('<h1>WebdriverIO Testpage</h1>')
+    })
+
     describe('can be used with waitFor commands without throwing an error while querying it', () => {
         it('can query an element without throwing an error', () => {
             let res = browser.element('#notExisting')
@@ -134,6 +155,27 @@ describe('element as first class citizen', () => {
             expect(error.message).to.be.equal('Promise was rejected with the following reason: Error: ' +
                 'An element could not be located on the page using the given search parameters ' +
                 '("#notExisting").')
+        })
+    })
+
+    describe('$ and $$ helper methods', () => {
+        it('should provide helper method $ to fetch single element', () => {
+            let header = $('header h1')
+            expect(header.getTagName()).to.be.equal('h1')
+            expect($('header h1').getTagName()).to.be.equal('h1')
+        })
+
+        /**
+         * doesn't work on Travis
+         */
+        it.skip('should provide helper method $$ to fetch multiple elements', () => {
+            const colors = ['#ff0000', '#008000', '#ffff00', '#000000', '#800080']
+            $$('.box').forEach((box, i) => expect(box.getCssProperty('background').parsed.hex).to.be.equal(colors[i]))
+            expect(browser.elements('.box').getCssProperty('background').map((c) => c.parsed.hex)).to.be.deep.equal(colors)
+        })
+
+        it('should be able to chain $ and $$', () => {
+            expect($('body').$$('select')[1].$$('option')[3].getText()).to.be.equal('cuatro')
         })
     })
 })

@@ -91,7 +91,7 @@ describe('ConfigParser', () => {
 
         let config = configParser.getConfig()
         config.host.should.be.equal('ondemand.saucelabs.com')
-        config.port.should.be.equal(80)
+        config.port.should.be.equal(443)
         config.user.should.be.equal('foobar')
         config.key.should.be.equal('50fa142c-3121-4gb0-9p07-8q326vvbq7b0')
     })
@@ -103,7 +103,7 @@ describe('ConfigParser', () => {
 
         let config = configParser.getConfig()
         config.host.should.be.equal('ondemand.saucelabs.com')
-        config.port.should.be.equal(80)
+        config.port.should.be.equal(443)
         config.user.should.be.equal('barfoo')
         config.key.should.be.equal('50fa1411-3121-4gb0-9p07-8q326vvbq7b0')
     })
@@ -127,5 +127,14 @@ describe('ConfigParser', () => {
         config.before[0]().should.be.equal('before: I executed properly')
         config.after[0]().should.be.equal('after: I executed properly')
         config.after[1]().should.be.equal('anonymous: I executed properly')
+    })
+
+    it('should parse beforeSession hook from config file', () => {
+        let configParser = new ConfigParser()
+        configParser.getConfig().beforeSession.should.be.an('array').and.be.empty
+        configParser.getConfig().afterSession.should.be.an('array').and.be.empty
+        configParser.addConfigFile(FIXTURES_PATH + '/hooks.wdio.conf.js')
+        configParser.getConfig().beforeSession.should.be.an('array').and.have.a.lengthOf(1)
+        configParser.getConfig().afterSession.should.be.an('array').and.have.a.lengthOf(1)
     })
 })

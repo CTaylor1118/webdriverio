@@ -67,8 +67,8 @@ exports.config = {
         browserName: 'chrome'
     }, {
         // maxInstances can get overwritten per capability. So if you have an in-house Selenium
-        // grid with only 5 firefox instance available you can make sure that not more than
-        // 5 instance gets started at a time.
+        // grid with only 5 firefox instances available you can make sure that not more than
+        // 5 instances get started at a time.
         maxInstances: 5,
         browserName: 'firefox',
         specs: [
@@ -103,8 +103,12 @@ exports.config = {
     screenshotPath: 'shots',
     //
     // Set a base URL in order to shorten url command calls. If your url parameter starts
-    //  with "/", then the base url gets prepended.
+    // with "/", then the base url gets prepended.
     baseUrl: 'http://localhost:8080',
+    //
+    // If you only want to run your tests until a specific amount of tests have failed use
+    // bail (default is 0 - don't bail, run all tests).
+    bail: 0,
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 1000,
@@ -205,6 +209,11 @@ exports.config = {
     onPrepare: function (config, capabilities) {
     },
     //
+    // Gets executed just before initialising the webdriver session and test framework. It allows you
+    // to manipulate configurations depending on the capability or spec.
+    beforeSession: function (config, capabilities, specs) {
+    },
+    //
     // Gets executed before test execution begins. At this point you can access to all global
     // variables, such as `browser`. It is the perfect place to define custom commands.
     before: function (capabilities, specs) {
@@ -247,6 +256,10 @@ exports.config = {
     // Gets executed after all tests are done. You still have access to all global variables from
     // the test.
     after: function (result, capabilities, specs) {
+    },
+    //
+    // Gets executed right after terminating the webdriver session.
+    afterSession: function (config, capabilities, specs) {
     },
     //
     // Gets executed after all workers got shut down and the process is about to exit. It is not
