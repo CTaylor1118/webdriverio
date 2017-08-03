@@ -1,5 +1,76 @@
 # CHANGELOG
 
+## v4.8.0 (2017-04-30)
+* global changes:
+    * docs improvements (#2006, #2001, #2010, #2011, #2013, #2016, #2017, #2032)
+    * make API compliant to [Webdriver candidate recommendation](https://www.w3.org/TR/2017/CR-webdriver-20170330/)
+    * bug fixes (#2024)
+    * make url act like url.resolve (#1946)
+    * more generic error when failing to connect to Selenium server
+    * add deprecation warnings to all commands that aren't part of the Webdriver spec and will be removed with the next major version update
+
+## v4.7.1 (2017-04-21)
+* global changes:
+    * fix bug where isExisting fails when calling it on a lazy loaded element (#2003)
+
+## v4.7.0 (2017-04-20)
+* global changes:
+    * added [Code of Conduct](https://github.com/webdriverio/webdriverio/blob/master/CONDUCT.md)
+    * bugfixes (#1855, #1869, #1931)
+    * docs improvements (#1979, #1977, #1905, #1975, #1971, #1972, #1952, #1952, #1948, #1943, #1905, #1940, #1936, #1934, #1930, #1920, #1926, #1919, #1916, #1915, #1904, #1899, #1897, #1887, #1889, #1876, #1850, #1845)
+    * better error messages when element was not found (#1862)
+    * added timestamp to getCommandHistory results (#1873)
+    * added toggleTouchIdEnrollment command (#1951)
+    * don't trim string results anymore (#1885)
+    * (internal) replaced grunt task runner with npm scripts
+    * (internal) updated all dependencies
+* wdio changes:
+    * added the ability to send your own events for runner's reporters (#1893)
+    * resolved memory leak in reporter - thanks @jankcat 👏 (#1993)
+    * make session hooks to respect promises (#1958)
+    * exit launcher when no spec was found (#1998)
+
+## v4.6.2 (2017-01-24)
+* global changes:
+    * docs improvements
+    * update dependencies
+
+## v4.6.1 (2017-01-05)
+* wdio changes:
+    * fixed wording for log in watch mode
+    * added more supported services to cli
+
+## v4.6.0 (2017-01-05)
+* global changes:
+    * docs improvements
+    * bug fixes
+* wdio changes:
+    * add watch mode (accessible via `--watch` argument) to wdio testrunner
+
+## v4.5.2 (2016-12-22)
+* global changes:
+    * docs improvements
+    * minor improvements to REPL interface
+* wdio changes:
+    * bugfixes (#1460)
+
+## v4.5.1 (2016-12-19)
+* global changes:
+    * bug fixes
+    * docs improvements
+
+## v4.5.0 (2016-12-12)
+* global changes:
+    * bugfixes (standalone & wdio testrunner)
+    * docs improvements
+    * fix `removeApp` command
+    * introduce [REPL interface](https://twitter.com/webdriverio/status/806911722682544128)
+* wdio changes:
+    * enable `--reporters` cli parameter
+    * improved Mocha timeout error messages
+    * introduce beforeSession / afterSession hooks
+    * identify tests by uid and not just by title (fixes couple of bug reports) - thx @wvankuipers
+
 ## v4.4.0 (2016-11-08)
 * global changes / WDIO changes:
     * introduced `$` and `$$` API commands as shortcuts to fetch elements

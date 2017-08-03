@@ -5,7 +5,9 @@ title: WebdriverIO - Developer Guide
 
 # Developer Guide
 
-Welcome to the WebdriverIO documentation. It will help you to get started fast. If you run into problems you can find help and answers on our [Gitter Channel](https://gitter.im/webdriverio/webdriverio) or you can hit me on [Twitter](https://twitter.com/webdriverio). The following will give you a short step by step introduction to get your first WebdriverIO script up and running.
+Welcome to the WebdriverIO documentation. It will help you to get started fast. If you run into problems you can find help and answers on our [Gitter Channel](https://gitter.im/webdriverio/webdriverio) or you can hit me on [Twitter](https://twitter.com/webdriverio). Also, if you encounter problems in starting up the server or running the tests after following this tutorial, ensure that the server and the geckodriver are listed in your project directory. If not, re-download them per steps 2 and 3 below.
+
+The following will give you a short step by step introduction to get your first WebdriverIO script up and running.
 
 ## Taking the first step
 
@@ -16,25 +18,27 @@ Let's suppose you have [Node.js](http://nodejs.org/) and Java already installed.
 $ mkdir webdriverio-test && cd webdriverio-test
 ```
 
+*While still in this test folder:*
+
 Then let's download the latest [selenium standalone server](http://docs.seleniumhq.org/download/) version:
 
 ** 2. Download latest selenium standalone server**
 ```sh
-$ curl -O http://selenium-release.storage.googleapis.com/3.0/selenium-server-standalone-3.0.1.jar
+$ curl -O http://selenium-release.storage.googleapis.com/3.4/selenium-server-standalone-3.4.0.jar
 ```
 
-** 3. Download the latest version geckdriver for your environment and unpack it in your project directory**
+** 3. Download the latest version geckodriver for your environment and unpack it in your project directory**
 
 Linux 64 bit
 
 ```sh
-$ curl -L https://github.com/mozilla/geckodriver/releases/download/v0.11.1/geckodriver-v0.11.1-linux64.tar.gz | tar xz
+$ curl -L https://github.com/mozilla/geckodriver/releases/download/v0.16.0/geckodriver-v0.16.0-linux64.tar.gz | tar xz
 ```
 
 OSX
 
 ```sh
-$ curl -L https://github.com/mozilla/geckodriver/releases/download/v0.11.1/geckodriver-v0.11.1-macos.tar.gz | tar xz
+$ curl -L https://github.com/mozilla/geckodriver/releases/download/v0.16.0/geckodriver-v0.16.0-macos.tar.gz | tar xz
 ```
 
 Note: Other geckodriver releases are available [here](https://github.com/mozilla/geckodriver/releases).
@@ -43,7 +47,7 @@ Start the server by executing the following:
 
 ** 4. Start selenium standalone server**
 ```sh
-$ java -jar -Dwebdriver.geckodriver.driver=./geckodriver selenium-server-standalone-3.0.1.jar
+$ java -jar -Dwebdriver.gecko.driver=./geckodriver selenium-server-standalone-3.4.0.jar
 ```
 
 Note that this command sets webdriver path variable so that Selenium uses the geckdriver binary that was added to the project directory and also starts Selenium standalone server.
@@ -88,6 +92,8 @@ Title was: Google
 Yay, Congratulations! You've just run your first automation script with WebdriverIO. Let's step it up a notch and create a real test.
 
 ## Let's get serious
+
+*(If you haven't already, navigate back to the project root directory)*
 
 This was just a warm up. Let's move forward and run WebdriverIO with the test runner. If you want to use WebdriverIO in your project for integration testing we recommend to use the test runner because it comes with a lot of useful features that makes your life easier. The first step is to create a config file. To do that just run the configuration utility:
 
@@ -142,7 +148,7 @@ describe('webdriver.io page', function() {
     it('should have the right title - the fancy generator way', function () {
         browser.url('http://webdriver.io');
         var title = browser.getTitle();
-        assert.equal(title, 'WebdriverIO - Selenium 2.0 javascript bindings for nodejs');
+        assert.equal(title, 'WebdriverIO - WebDriver bindings for Node.js');
     });
 });
 ```

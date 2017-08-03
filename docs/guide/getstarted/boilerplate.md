@@ -66,3 +66,28 @@ This project is an example of how to get started with WebdriverIO for Selenium t
     - detailed documentation
     - runs tests in a [Docker](https://www.docker.com/) container
     - Babel setup
+
+## [WillLuce/WebdriverIO_Typescript](https://github.com/WillLuce/WebdriverIO_Typescript)
+
+This directory contains the WebdriverIO page object example written using TypeScript.
+
+- Framework: Mocha
+- Features:
+    - examples of Page Object Model implemenetation
+    - Intellisence
+
+## [klamping/wdio-starter-kit](https://github.com/klamping/wdio-starter-kit)
+
+Boilerplate repo for quick set up of WebdriverIO test scripts with TravisCI, Sauce Labs and Visual Regression Testing
+
+- Framework: Mocha, Chai
+- Features:
+    - Login & Registration Tests, with Page Objects
+    - Mocha
+    - Chai with expect global
+    - Chai WebdriverIO
+    - Sauce Labs integration
+    - Visual Regression Tests
+    - Local notifications
+    - ESLint using Semistandard style
+    - WebdriverIO tuned Gitignore file

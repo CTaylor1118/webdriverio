@@ -19,7 +19,7 @@ exports.config = {
     // Host address of the running Selenium server. This information is usually obsolete as
     // WebdriverIO automatically connects to localhost. Also if you are using one of the
     // supported cloud services like Sauce Labs, Browserstack or Testing Bot you also don't
-    // need to define host and port information because WebdriverIO can figure that our
+    // need to define host and port information because WebdriverIO can figure that out
     // according to your user and key information. However if you are using a private Selenium
     // backend you should define the host address, port, and path here.
     //
@@ -78,7 +78,12 @@ exports.config = {
     // https://docs.saucelabs.com/reference/platforms-configurator
     //
     capabilities: [{
-        browserName: 'chrome'
+        browserName: 'chrome',
+        chromeOptions: {
+        // to run chrome headless the following flags are required
+        // (see https://developers.google.com/web/updates/2017/04/headless-chrome)
+        // args: ['--headless', '--disable-gpu'],       
+        }        
     }, {
         // maxInstances can get overwritten per capability. So if you have an in house Selenium
         // grid with only 5 firefox instance available you can make sure that not more than
@@ -101,10 +106,10 @@ exports.config = {
     // When debugging it is also recommended to change the timeout interval of
     // test runner (eg. jasmineNodeOpts.defaultTimeoutInterval) to a very high
     // value and setting maxInstances to 1.
-    debug: false
+    debug: false,
     //
     // Additional list node arguments to use when starting child processes
-    execArgv: null
+    execArgv: null,
     //
     //
     // ===================
@@ -123,6 +128,9 @@ exports.config = {
     // Enables colors for log output.
     coloredLogs: true,
     //
+    // Warns when a deprecated command is used
+    deprecationWarnings: true,
+    //
     // If you only want to run your tests until a specific amount of tests have failed use
     // bail (default is 0 - don't bail, run all tests).
     bail: 0,
@@ -130,8 +138,10 @@ exports.config = {
     // Saves a screenshot to a given path if a command fails.
     screenshotPath: 'shots',
     //
-    // Set a base URL in order to shorten url command calls. If your url parameter starts
-    //  with "/", the base url gets prepended.
+    // Set a base URL in order to shorten url command calls. If your `url` parameter starts 
+    // with `/`, the base url gets prepended, not including the path portion of your baseUrl. 
+    // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url 
+    // gets prepended directly.
     baseUrl: 'http://localhost:8080',
     //
     // Default timeout for all waitForXXX commands.
@@ -164,7 +174,7 @@ exports.config = {
     //
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
-    // see also: http://webdriver.io/guide/testrunner/reporters.html
+    // see also: http://webdriver.io/guide.html and click on "Reporters" in left column
     reporters: ['dot', 'allure'],
     //
     // Some reporter require additional information which should get defined here
@@ -215,7 +225,7 @@ exports.config = {
         profile: [],        // <string[]> (name) specify the profile to use
         strict: false,      // <boolean> fail if there are any undefined or pending steps
         tags: [],           // <string[]> (expression) only execute the features or scenarios with tags matching the expression
-        timeout: 20000      // <number> timeout for step definitions
+        timeout: 20000,      // <number> timeout for step definitions
         ignoreUndefinedDefinitions: false, // <boolean> Enable this config to treat undefined definitions as warnings.
     },
     //
@@ -227,66 +237,107 @@ exports.config = {
     // methods. If one of them returns with a promise, WebdriverIO will wait until that promise got
     // resolved to continue.
     //
-    // Gets executed once before all workers get launched.
+
+    /**
+     * Gets executed once before all workers get launched.
+     * @param {Object} config wdio configuration object
+     * @param {Array.<Object>} capabilities list of capabilities details
+     */
     onPrepare: function (config, capabilities) {
     },
-    //
-    // Gets executed just before initialising the webdriver session and test framework. It allows you
-    // to manipulate configurations depending on the capability or spec.
+    /**
+     * Gets executed just before initialising the webdriver session and test framework. It allows you
+     * to manipulate configurations depending on the capability or spec.
+     * @param {Object} config wdio configuration object
+     * @param {Array.<Object>} capabilities list of capabilities details
+     * @param {Array.<String>} specs List of spec file paths that are to be run
+     */
     beforeSession: function (config, capabilities, specs) {
-    },
-    //
-    // Gets executed before test execution begins. At this point you can access to all global
-    // variables like `browser`. It is the perfect place to define custom commands.
+    },  
+    /**
+     * Gets executed before test execution begins. At this point you can access to all global
+     * variables like `browser`. It is the perfect place to define custom commands.
+     * @param {Array.<Object>} capabilities list of capabilities details
+     * @param {Array.<String>} specs List of spec file paths that are to be run
+     */
     before: function (capabilities, specs) {
     },
-    //
-    // Hook that gets executed before the suite starts
+    /**
+     * Hook that gets executed before the suite starts
+     * @param {Object} suite suite details
+     */
     beforeSuite: function (suite) {
     },
-    //
-    // Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
-    // beforeEach in Mocha)
+    /**
+     * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
+     * beforeEach in Mocha)
+     */
     beforeHook: function () {
     },
-    //
-    // Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
-    // afterEach in Mocha)
+    /**
+     * Hook that gets executed _after_ a hook within the suite starts (e.g. runs after calling
+     * afterEach in Mocha)
+     */
     afterHook: function () {
     },
-    //
-    // Function to be executed before a test (in Mocha/Jasmine) or a step (in Cucumber) starts.
+    /**
+     * Function to be executed before a test (in Mocha/Jasmine) or a step (in Cucumber) starts.
+     * @param {Object} test test details
+     */
     beforeTest: function (test) {
     },
-    //
-    // Runs before a WebdriverIO command gets executed.
+    /**
+     * Runs before a WebdriverIO command gets executed.
+     * @param {String} commandName hook command name
+     * @param {Array} args arguments that command would receive
+     */
     beforeCommand: function (commandName, args) {
     },
-    //
-    // Runs after a WebdriverIO command gets executed
+    /**
+     * Runs after a WebdriverIO command gets executed
+     * @param {String} commandName hook command name
+     * @param {Array} args arguments that command would receive
+     * @param {Number} result 0 - command success, 1 - command error
+     * @param {Object} error error object if any
+     */
     afterCommand: function (commandName, args, result, error) {
     },
-    //
-    // Function to be executed after a test (in Mocha/Jasmine) or a step (in Cucumber) starts.
+    /**
+     * Function to be executed after a test (in Mocha/Jasmine) or a step (in Cucumber) starts.
+     * @param {Object} test test details
+     */
     afterTest: function (test) {
     },
-    //
-    // Hook that gets executed after the suite has ended
+    /**
+     * Hook that gets executed after the suite has ended
+     * @param {Object} suite suite details
+     */
     afterSuite: function (suite) {
     },
-    //
-    // Gets executed after all tests are done. You still have access to all global variables from
-    // the test.
+    /**
+     * Gets executed after all tests are done. You still have access to all global variables from
+     * the test.
+     * @param {Number} result 0 - test pass, 1 - test fail
+     * @param {Array.<Object>} capabilities list of capabilities details
+     * @param {Array.<String>} specs List of spec file paths that ran
+     */
     after: function (result, capabilities, specs) {
     },
-    //
-    // Gets executed right after terminating the webdriver session.
+    /**
+     * Gets executed right after terminating the webdriver session.
+     * @param {Object} config wdio configuration object
+     * @param {Array.<Object>} capabilities list of capabilities details
+     * @param {Array.<String>} specs List of spec file paths that ran
+     */
     afterSession: function (config, capabilities, specs) {
     },
-    //
-    // Gets executed after all workers got shut down and the process is about to exit. It is not
-    // possible to defer the end of the process using a promise.
-    onComplete: function (exitCode) {
+    /**
+     * Gets executed after all workers got shut down and the process is about to exit.
+     * @param {Object} exitCode 0 - success, 1 - fail
+     * @param {Object} config wdio configuration object
+     * @param {Array.<Object>} capabilities list of capabilities details
+     */
+    onComplete: function (exitCode, config, capabilities) {
     },
     //
     // Cucumber specific hooks
