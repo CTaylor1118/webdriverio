@@ -190,10 +190,6 @@ var WebdriverIO = function WebdriverIO(args, modifier) {
             result = result.call(this);
         }
 
-        if (context === undefined) {
-            context = this;
-        }
-
         /**
          * run error handler if command fails
          */
@@ -201,18 +197,18 @@ var WebdriverIO = function WebdriverIO(args, modifier) {
             var _result = result;
 
             this.defer.resolve(_promise2.default.all(_errorHandler2.default.map(function (fn) {
-                return fn.call(ctx, result);
+                return fn.call(context, result);
             })).then(function (res) {
                 var handlerResponses = res.filter(function (r) {
                     return typeof r !== 'undefined';
                 });
-
                 /**
                  * if no handler was triggered trough actual error
                  */
                 if (handlerResponses.length === 0) {
                     return callErrorHandlerAndReject.call(context, _result, onRejected);
                 }
+
                 if (onFulfilled) {
                     return onFulfilled.call(context, handlerResponses[0]);
                 } else {
@@ -465,6 +461,7 @@ var WebdriverIO = function WebdriverIO(args, modifier) {
                         }
 
                         var error = new Error(message);
+                        _this2.depth = 0;
                         return resolve.call(_this2, error, null, null, _this2);
                     }
 
@@ -495,6 +492,7 @@ var WebdriverIO = function WebdriverIO(args, modifier) {
                  * this will get reached only in standalone mode if the command
                  * fails and doesn't get followed by a then or catch method
                  */
+                _this2.depth = 0;
                 return resolve.call(_this2, e, null, null, _this2);
             });
         };
