@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.default = contexts;
 /**
  *
  * Returns an object with a value field containing the list of all available contexts
@@ -14,9 +15,7 @@ Object.defineProperty(exports, "__esModule", {
  *
  */
 
-var contexts = function contexts() {
+function contexts() {
   return this.requestHandler.create('/session/:sessionId/contexts');
-};
-
-exports.default = contexts;
+}
 module.exports = exports['default'];

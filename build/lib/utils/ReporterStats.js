@@ -80,7 +80,7 @@ var RunnerStats = function (_RunnableStats) {
     function RunnerStats(runner) {
         (0, _classCallCheck3.default)(this, RunnerStats);
 
-        var _this = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(RunnerStats).call(this, 'runner'));
+        var _this = (0, _possibleConstructorReturn3.default)(this, (RunnerStats.__proto__ || (0, _getPrototypeOf2.default)(RunnerStats)).call(this, 'runner'));
 
         _this.uid = ReporterStats.getIdentifier(runner);
         _this.cid = runner.cid;
@@ -100,7 +100,7 @@ var SpecStats = function (_RunnableStats2) {
     function SpecStats(runner) {
         (0, _classCallCheck3.default)(this, SpecStats);
 
-        var _this2 = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(SpecStats).call(this, 'spec'));
+        var _this2 = (0, _possibleConstructorReturn3.default)(this, (SpecStats.__proto__ || (0, _getPrototypeOf2.default)(SpecStats)).call(this, 'spec'));
 
         _this2.uid = ReporterStats.getIdentifier(runner);
         _this2.files = runner.specs;
@@ -119,7 +119,7 @@ var SuiteStats = function (_RunnableStats3) {
     function SuiteStats(runner) {
         (0, _classCallCheck3.default)(this, SuiteStats);
 
-        var _this3 = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(SuiteStats).call(this, 'suite'));
+        var _this3 = (0, _possibleConstructorReturn3.default)(this, (SuiteStats.__proto__ || (0, _getPrototypeOf2.default)(SuiteStats)).call(this, 'suite'));
 
         _this3.uid = ReporterStats.getIdentifier(runner);
         _this3.title = runner.title;
@@ -137,7 +137,7 @@ var TestStats = function (_RunnableStats4) {
     function TestStats(runner) {
         (0, _classCallCheck3.default)(this, TestStats);
 
-        var _this4 = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(TestStats).call(this, 'test'));
+        var _this4 = (0, _possibleConstructorReturn3.default)(this, (TestStats.__proto__ || (0, _getPrototypeOf2.default)(TestStats)).call(this, 'test'));
 
         _this4.uid = ReporterStats.getIdentifier(runner);
         _this4.title = runner.title;
@@ -156,11 +156,12 @@ var HookStats = function (_RunnableStats5) {
     function HookStats(runner) {
         (0, _classCallCheck3.default)(this, HookStats);
 
-        var _this5 = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(HookStats).call(this, 'hook'));
+        var _this5 = (0, _possibleConstructorReturn3.default)(this, (HookStats.__proto__ || (0, _getPrototypeOf2.default)(HookStats)).call(this, 'hook'));
 
         _this5.uid = ReporterStats.getIdentifier(runner);
         _this5.title = runner.title;
         _this5.parent = runner.parent;
+        _this5.parenUid = runner.parentUid || runner.parent;
         _this5.currentTest = runner.currentTest;
         return _this5;
     }
@@ -174,22 +175,28 @@ var ReporterStats = function (_RunnableStats6) {
     function ReporterStats() {
         (0, _classCallCheck3.default)(this, ReporterStats);
 
-        var _this6 = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(ReporterStats).call(this, 'base'));
+        var _this6 = (0, _possibleConstructorReturn3.default)(this, (ReporterStats.__proto__ || (0, _getPrototypeOf2.default)(ReporterStats)).call(this, 'base'));
 
-        _this6.counts = {
-            suites: 0,
-            tests: 0,
-            hooks: 0,
-            passes: 0,
-            pending: 0,
-            failures: 0
-        };
         _this6.runners = {};
-        _this6.failures = [];
+
+        _this6.reset();
         return _this6;
     }
 
     (0, _createClass3.default)(ReporterStats, [{
+        key: 'reset',
+        value: function reset() {
+            this.counts = {
+                suites: 0,
+                tests: 0,
+                hooks: 0,
+                passes: 0,
+                pending: 0,
+                failures: 0
+            };
+            this.failures = [];
+        }
+    }, {
         key: 'getCounts',
         value: function getCounts() {
             return this.counts;
@@ -311,7 +318,7 @@ var ReporterStats = function (_RunnableStats6) {
     }, {
         key: 'hookStart',
         value: function hookStart(runner) {
-            var suiteStat = this.getSuiteStats(runner, runner.parent);
+            var suiteStat = this.getSuiteStats(runner, runner.parentUid || runner.parent);
 
             if (!suiteStat) {
                 return;
@@ -334,12 +341,12 @@ var ReporterStats = function (_RunnableStats6) {
     }, {
         key: 'testStart',
         value: function testStart(runner) {
-            this.getSuiteStats(runner, runner.parent).tests[ReporterStats.getIdentifier(runner)] = new TestStats(runner);
+            this.getSuiteStats(runner, runner.parentUid || runner.parent).tests[ReporterStats.getIdentifier(runner)] = new TestStats(runner);
         }
     }, {
         key: 'getHookStats',
         value: function getHookStats(runner) {
-            var suiteStats = this.getSuiteStats(runner, runner.parent);
+            var suiteStats = this.getSuiteStats(runner, runner.parentUid || runner.parent);
 
             if (!suiteStats) {
                 return;
@@ -358,7 +365,7 @@ var ReporterStats = function (_RunnableStats6) {
     }, {
         key: 'getTestStats',
         value: function getTestStats(runner) {
-            var suiteStats = this.getSuiteStats(runner, runner.parent);
+            var suiteStats = this.getSuiteStats(runner, runner.parentUid || runner.parent);
 
             if (!suiteStats) {
                 return;
@@ -378,6 +385,10 @@ var ReporterStats = function (_RunnableStats6) {
         key: 'output',
         value: function output(type, runner) {
             runner.time = new Date();
+            // Remove the screenshot data to reduce RAM usage on the parent process
+            if (type === 'screenshot') {
+                runner.data = null;
+            }
             if (ReporterStats.getIdentifier(runner) && runner.parent) {
                 this.getTestStats(runner).output.push({
                     type: type,
@@ -416,14 +427,14 @@ var ReporterStats = function (_RunnableStats6) {
              * message
              */
             var message = 'Ensure the done() callback is being called in this test.';
-            if (runner.err && runner.err.message.indexOf(message) > -1) {
+            if (runner.err && runner.err.message && runner.err.message.indexOf(message) > -1) {
                 var replacement = 'The execution in the test "' + runner.parent + ' ' + runner.title + '" took ' + 'too long. Try to reduce the run time or increase your timeout for ' + 'test specs (http://webdriver.io/guide/testrunner/timeouts.html).';
                 runner.err.message = runner.err.message.replace(message, replacement);
                 runner.err.stack = runner.err.stack.replace(message, replacement);
             }
 
             message = 'For async tests and hooks, ensure "done()" is called;';
-            if (runner.err && runner.err.message.indexOf(message) > -1) {
+            if (runner.err && runner.err.message && runner.err.message.indexOf(message) > -1) {
                 var _replacement = 'Try to reduce the run time or increase your timeout for ' + 'test specs (http://webdriver.io/guide/testrunner/timeouts.html);';
                 runner.err.message = runner.err.message.replace(message, _replacement);
                 runner.err.stack = runner.err.stack.replace(message, _replacement);

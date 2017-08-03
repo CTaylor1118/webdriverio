@@ -74,8 +74,8 @@ var COLORS = {
 };
 
 var SYMBOLS_WIN = {
-    ok: '√',
-    err: '×',
+    ok: '\u221A',
+    err: '\xD7',
     dot: '.',
     error: 'F'
 };
@@ -93,7 +93,7 @@ var BaseReporter = function (_events$EventEmitter) {
     function BaseReporter() {
         (0, _classCallCheck3.default)(this, BaseReporter);
 
-        var _this = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(BaseReporter).call(this));
+        var _this = (0, _possibleConstructorReturn3.default)(this, (BaseReporter.__proto__ || (0, _getPrototypeOf2.default)(BaseReporter)).call(this));
 
         _this.reporters = [];
         _this.printEpilogue = true;
@@ -216,7 +216,7 @@ var BaseReporter = function (_events$EventEmitter) {
         key: 'color',
         value: function color(type, str) {
             if (!_supportsColor2.default) return String(str);
-            return '\u001b[' + COLORS[type] + 'm' + str + '\u001b[0m';
+            return '\x1B[' + COLORS[type] + 'm' + str + '\x1B[0m';
         }
     }, {
         key: 'limit',
@@ -248,7 +248,7 @@ var BaseReporter = function (_events$EventEmitter) {
 
             // pending
             if (counts.pending) {
-                fmt = this.color('pending', '%d pending');
+                fmt = this.color('pending', '%d skipped');
                 console.log(fmt, counts.pending);
             }
 
@@ -276,7 +276,7 @@ var BaseReporter = function (_events$EventEmitter) {
             console.log();
             this.stats.getFailures().forEach(function (test, i) {
                 var fmt = _this2.color('error title', '%s) %s:\n') + _this2.color('error message', '%s') + _this2.color('bright yellow', '%s') + _this2.color('error stack', '\n%s\n');
-                var title = typeof test.parent !== 'undefined' ? test.parent + ' ' + test.title : test.title;
+                var title = typeof test.fullTitle !== 'undefined' ? test.fullTitle : typeof test.parent !== 'undefined' ? test.parent + ' ' + test.title : test.title;
                 console.log(fmt, i + 1, title, test.err.message, test.runningBrowser, test.err.stack);
             });
         }
@@ -383,22 +383,22 @@ var Cursor = function () {
     (0, _createClass3.default)(Cursor, [{
         key: 'hide',
         value: function hide() {
-            ISATTY && process.stdout.write('\u001b[?25l');
+            ISATTY && process.stdout.write('\x1B[?25l');
         }
     }, {
         key: 'show',
         value: function show() {
-            ISATTY && process.stdout.write('\u001b[?25h');
+            ISATTY && process.stdout.write('\x1B[?25h');
         }
     }, {
         key: 'deleteLine',
         value: function deleteLine() {
-            ISATTY && process.stdout.write('\u001b[2K');
+            ISATTY && process.stdout.write('\x1B[2K');
         }
     }, {
         key: 'beginningOfLine',
         value: function beginningOfLine() {
-            ISATTY && process.stdout.write('\u001b[0G');
+            ISATTY && process.stdout.write('\x1B[0G');
         }
     }, {
         key: 'CR',

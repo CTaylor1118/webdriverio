@@ -21,7 +21,14 @@ var click = function click(selector) {
     });
 }; /**
     *
-    * Click on an element based on given selector.
+    * Click on an element based on the given selector (unless the element is covered up).
+    *
+    * Note: This issues a Webdriver `click` command for the selected element, which generally scrolls to and then clicks the
+    * selected element.  However, if you have fixed-position elements (such as a fixed header or footer) that cover up the
+    * selected element after it is scrolled within the viewport, the click will be issued at the given coordinates, but will
+    * be received by your fixed element.
+    *
+    * To work around this, you can scroll to the element yourself using `scroll` with an offset appropriate for your scenario.
     *
     * <example>
        :example.html
@@ -43,7 +50,7 @@ var click = function click(selector) {
        it('should fetch menu links and visit each page', function () {
            links = $$('#menu a');
    
-           menu.forEach(function (link) {
+           links.forEach(function (link) {
                link.click();
            });
        });

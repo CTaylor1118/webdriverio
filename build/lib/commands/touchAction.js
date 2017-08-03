@@ -19,6 +19,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /**
  *
  * The Touch Action API provides the basis of all gestures that can be automated in Appium.
+ * It is currently only available to native apps and can not be used to interact with webapps.
  * At its core is the ability to chain together _ad hoc_ individual actions, which will then be
  * applied to an element in the application on the device. The basic actions that can be used are:
  *
@@ -44,7 +45,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
         // simple touch action using x y variables
         browser.touchAction({
-            actions: 'tap', x: 300, y:200
+            action: 'tap', x: 300, y:200
         })
 
         // simple touch action using selector and x y variables
@@ -90,6 +91,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @see https://saucelabs.com/blog/appium-sauce-labs-bootcamp-chapter-2-touch-actions
  * @type mobile
  * @for android, ios
+ * @uses mobile/performTouchAction, mobile/performMultiAction
  *
  */
 
@@ -144,12 +146,12 @@ var formatArgs = function formatArgs(selector, actions) {
             return formatArgs(selector, action);
         }
 
-        var formattedAction = { action: action.action, options: {} };
+        var formattedAction = { action: action.action, options: {}
 
-        /**
-         * propagate selector or element to options object
-         */
-        if (selector &&
+            /**
+             * propagate selector or element to options object
+             */
+        };if (selector &&
         // selector is given as string `e.g. browser.touchAction(selector, 'tap')`
         typeof selector === 'string' &&
         // don't propagate for actions that don't require element options
@@ -232,7 +234,7 @@ var formatArgs = function formatArgs(selector, actions) {
 var getSelectors = function getSelectors(actions) {
     var _this2 = this;
 
-    var isMultiAction = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+    var isMultiAction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
     var queriedSelectors = [];
 

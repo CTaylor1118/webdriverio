@@ -4,31 +4,23 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _defineProperty2 = require('babel-runtime/helpers/defineProperty');
+
+var _defineProperty3 = _interopRequireDefault(_defineProperty2);
+
+exports.default = elementIdElement;
+
 var _ErrorHandler = require('../utils/ErrorHandler');
 
 var _findElementStrategy = require('../helpers/findElementStrategy');
 
 var _findElementStrategy2 = _interopRequireDefault(_findElementStrategy);
 
+var _constants = require('../helpers/constants');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- *
- * Search for an element on the page, starting from an element.
- * The located element will be returned as a WebElement JSON object.
- * The table below lists the locator strategies that each server should support.
- * Each locator must return the first matching element located in the DOM.
- *
- * @param {String} ID ID of a WebElement JSON object to route the command to
- * @param {String} selector selector to query the element
- * @returns {String} A WebElement JSON object for the located element.
- *
- * @see  https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidelement
- * @type protocol
- *
- */
-
-var elementIdElement = function elementIdElement(id, selector) {
+function elementIdElement(id, selector) {
     var _this = this;
 
     if (typeof id !== 'string' && typeof id !== 'number') {
@@ -41,6 +33,17 @@ var elementIdElement = function elementIdElement(id, selector) {
         value: found.value
     }).then(function (result) {
         result.selector = selector;
+
+        /**
+         * W3C webdriver protocol has changed element identifier from `ELEMENT` to
+         * `element-6066-11e4-a52e-4f735466cecf`. Let's make sure both identifier
+         * are supported.
+         */
+        var elemValue = result.value.ELEMENT || result.value[_constants.W3C_ELEMENT_ID];
+        result.value = (0, _defineProperty3.default)({
+            ELEMENT: elemValue
+        }, _constants.W3C_ELEMENT_ID, elemValue);
+
         return result;
     }, function (e) {
         var result = e.seleniumStack;
@@ -59,7 +62,20 @@ var elementIdElement = function elementIdElement(id, selector) {
         delete result.orgStatusMessage;
         return result;
     });
-};
+} /**
+   *
+   * Search for an element on the page, starting from an element.
+   * The located element will be returned as a WebElement JSON object.
+   * The table below lists the locator strategies that each server should support.
+   * Each locator must return the first matching element located in the DOM.
+   *
+   * @param {String} ID ID of a WebElement JSON object to route the command to
+   * @param {String} selector selector to query the element
+   * @return {String} A WebElement JSON object for the located element.
+   *
+   * @see  https://w3c.github.io/webdriver/webdriver-spec.html#find-element-from-element
+   * @type protocol
+   *
+   */
 
-exports.default = elementIdElement;
 module.exports = exports['default'];

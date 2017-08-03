@@ -21,12 +21,12 @@ exports.default = touchId;
  *
  * @type mobile
  * @for  ios
- * @see https://developer.apple.com/videos/play/wwdc2015/406/
+ * @see https://github.com/appium/appium-base-driver/blob/master/docs/mjsonwp/protocol-methods.md
  *
  */
 
 function touchId() {
-    var match = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+    var match = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
     return this.requestHandler.create('session/:session_id/appium/simulator/touch_id', { match: match });
 }

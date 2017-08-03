@@ -8,10 +8,6 @@ var _getIterator2 = require('babel-runtime/core-js/get-iterator');
 
 var _getIterator3 = _interopRequireDefault(_getIterator2);
 
-var _typeof2 = require('babel-runtime/helpers/typeof');
-
-var _typeof3 = _interopRequireDefault(_typeof2);
-
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
@@ -53,6 +49,7 @@ var DEFAULT_CONFIGS = {
     exclude: [],
     logLevel: 'silent',
     coloredLogs: true,
+    deprecationWarnings: true,
     baseUrl: null,
     bail: 0,
     waitforInterval: 500,
@@ -137,7 +134,7 @@ var ConfigParser = function () {
                  */
                 var fileConfig = (0, _deepmerge2.default)(require(filePath).config, {});
 
-                if ((typeof fileConfig === 'undefined' ? 'undefined' : (0, _typeof3.default)(fileConfig)) !== 'object') {
+                if (typeof fileConfig !== 'object') {
                     throw new Error('configuration file exports no config object');
                 }
 
@@ -196,7 +193,7 @@ var ConfigParser = function () {
     }, {
         key: 'merge',
         value: function merge() {
-            var object = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+            var object = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
             this._config = (0, _deepmerge2.default)(this._config, object);
 

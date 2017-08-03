@@ -108,7 +108,7 @@ function (e) {
      * reset lastPromise so we can resolve it after rerun
      */
     this.lastPromise = (0, _q2.default)();
-
+    this.isExecuted = true;
     return this[commandToRepeat.name].apply(this, commandToRepeat.args);
 }];
 module.exports = exports['default'];

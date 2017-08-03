@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.default = getCurrentDeviceActivity;
 /**
  *
  * Get current device activity.
@@ -15,20 +16,18 @@ Object.defineProperty(exports, "__esModule", {
     });
  * </example>
  *
- * @see  https://github.com/appium/appium/blob/master/docs/en/appium-bindings.md#current-activity
+ * @see  https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/appium-bindings.md#current-activity
  * @type mobile
  * @for android
  *
  */
 
-var getCurrentDeviceActivity = function getCurrentDeviceActivity() {
+function getCurrentDeviceActivity() {
     return this.unify(this.requestHandler.create({
         path: '/session/:sessionId/appium/device/current_activity',
         method: 'GET'
     }), {
         extractValue: true
     });
-};
-
-exports.default = getCurrentDeviceActivity;
+}
 module.exports = exports['default'];

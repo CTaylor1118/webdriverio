@@ -1,8 +1,8 @@
 'use strict';
 
-var _typeof2 = require('babel-runtime/helpers/typeof');
+var _promise = require('babel-runtime/core-js/promise');
 
-var _typeof3 = _interopRequireDefault(_typeof2);
+var _promise2 = _interopRequireDefault(_promise);
 
 var _keys = require('babel-runtime/core-js/object/keys');
 
@@ -32,6 +32,10 @@ var _deepmerge = require('deepmerge');
 
 var _deepmerge2 = _interopRequireDefault(_deepmerge);
 
+var _gaze = require('gaze');
+
+var _gaze2 = _interopRequireDefault(_gaze);
+
 var _ConfigParser = require('./utils/ConfigParser');
 
 var _ConfigParser2 = _interopRequireDefault(_ConfigParser);
@@ -39,6 +43,8 @@ var _ConfigParser2 = _interopRequireDefault(_ConfigParser);
 var _ = require('../');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var WATCH_NOTIFICATION = '\nWDIO is now in watch mode and is waiting for a change...';
 
 var Runner = function () {
     function Runner() {
@@ -49,18 +55,20 @@ var Runner = function () {
         this.hasSessionID = false;
         this.failures = 0;
         this.forceKillingProcess = false;
+        this.isRunning = false;
+        this.fileTriggeredWhileRunning = null;
     }
 
     (0, _createClass3.default)(Runner, [{
         key: 'run',
         value: function () {
-            var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(m) {
+            var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(m) {
                 var _this = this;
 
                 var config, res;
-                return _regenerator2.default.wrap(function _callee3$(_context3) {
+                return _regenerator2.default.wrap(function _callee$(_context) {
                     while (1) {
-                        switch (_context3.prev = _context3.next) {
+                        switch (_context.prev = _context.next) {
                             case 0:
                                 this.cid = m.cid;
                                 this.specs = m.specs;
@@ -84,30 +92,10 @@ var Runner = function () {
                                 this.addCommandHooks(config);
                                 this.initialiseServices(config);
 
-                                config.beforeSession.forEach(function () {
-                                    var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee(hook) {
-                                        return _regenerator2.default.wrap(function _callee$(_context) {
-                                            while (1) {
-                                                switch (_context.prev = _context.next) {
-                                                    case 0:
-                                                        _context.next = 2;
-                                                        return hook(config, _this.caps, _this.specs);
+                                _context.next = 12;
+                                return this.runHook('beforeSession', config, this.caps, this.specs);
 
-                                                    case 2:
-                                                        return _context.abrupt('return', _context.sent);
-
-                                                    case 3:
-                                                    case 'end':
-                                                        return _context.stop();
-                                                }
-                                            }
-                                        }, _callee, _this);
-                                    }));
-
-                                    return function (_x2) {
-                                        return _ref2.apply(this, arguments);
-                                    };
-                                }());
+                            case 12:
 
                                 this.framework = this.initialiseFramework(config);
                                 global.browser = this.initialiseInstance(m.isMultiremote, this.caps);
@@ -171,7 +159,7 @@ var Runner = function () {
                                     /**
                                      * update sessionId property
                                      */
-                                    if (payload.requestOptions.method === 'POST' && payload.requestOptions.uri.path.match(/\/session$/)) {
+                                    if (payload.requestOptions && payload.requestOptions.method === 'POST' && payload.requestOptions.uri.path.match(/\/session$/)) {
                                         global.browser.sessionId = payload.body.sessionId;
                                     }
                                 });
@@ -216,6 +204,7 @@ var Runner = function () {
                                 });
 
                                 this.haltSIGINT = true;
+                                this.inWatchMode = Boolean(config.watch);
 
                                 /**
                                  * register global helper method to fetch elements
@@ -227,12 +216,12 @@ var Runner = function () {
                                     return global.browser.elements(selector).value;
                                 };
 
-                                _context3.prev = 26;
-                                _context3.next = 29;
+                                _context.prev = 28;
+                                _context.next = 31;
                                 return global.browser.init();
 
-                            case 29:
-                                res = _context3.sent;
+                            case 31:
+                                res = _context.sent;
 
                                 global.browser.sessionId = res.sessionId;
                                 this.haltSIGINT = false;
@@ -248,55 +237,47 @@ var Runner = function () {
                                  */
 
                                 if (!this.sigintWasCalled) {
-                                    _context3.next = 36;
+                                    _context.next = 41;
                                     break;
                                 }
 
-                                _context3.next = 36;
+                                _context.next = 38;
                                 return this.end(1);
 
-                            case 36:
-                                _context3.next = 38;
-                                return this.framework.run(m.cid, config, m.specs, this.caps);
-
                             case 38:
-                                this.failures = _context3.sent;
-                                _context3.next = 41;
-                                return this.end(this.failures);
+                                process.removeAllListeners();
+                                global.browser.removeAllListeners();
+                                return _context.abrupt('return');
 
                             case 41:
+                                if (!this.inWatchMode) {
+                                    _context.next = 43;
+                                    break;
+                                }
 
-                                config.afterSession.forEach(function () {
-                                    var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(hook) {
-                                        return _regenerator2.default.wrap(function _callee2$(_context2) {
-                                            while (1) {
-                                                switch (_context2.prev = _context2.next) {
-                                                    case 0:
-                                                        _context2.next = 2;
-                                                        return hook(config, _this.caps, _this.specs);
+                                return _context.abrupt('return', this.runWatchMode(m.cid, config, m.specs));
 
-                                                    case 2:
-                                                        return _context2.abrupt('return', _context2.sent);
-
-                                                    case 3:
-                                                    case 'end':
-                                                        return _context2.stop();
-                                                }
-                                            }
-                                        }, _callee2, _this);
-                                    }));
-
-                                    return function (_x3) {
-                                        return _ref3.apply(this, arguments);
-                                    };
-                                }());
-                                process.exit(this.failures === 0 ? 0 : 1);
-                                _context3.next = 50;
-                                break;
+                            case 43:
+                                _context.next = 45;
+                                return this.framework.run(m.cid, config, m.specs, this.caps);
 
                             case 45:
-                                _context3.prev = 45;
-                                _context3.t0 = _context3['catch'](26);
+                                this.failures = _context.sent;
+                                _context.next = 48;
+                                return this.end(this.failures);
+
+                            case 48:
+                                _context.next = 50;
+                                return this.runHook('afterSession', config, this.caps, this.specs);
+
+                            case 50:
+                                process.exit(this.failures === 0 ? 0 : 1);
+                                _context.next = 61;
+                                break;
+
+                            case 53:
+                                _context.prev = 53;
+                                _context.t0 = _context['catch'](28);
 
                                 process.send({
                                     event: 'error',
@@ -304,20 +285,25 @@ var Runner = function () {
                                     specs: this.specs,
                                     capabilities: this.caps,
                                     error: {
-                                        message: _context3.t0.message,
-                                        stack: _context3.t0.stack
+                                        message: _context.t0.message,
+                                        stack: _context.t0.stack
                                     }
                                 });
 
-                                _context3.next = 50;
+                                _context.next = 58;
                                 return this.end(1);
 
-                            case 50:
+                            case 58:
+                                process.removeAllListeners();
+                                global.browser.removeAllListeners();
+                                process.exit(1);
+
+                            case 61:
                             case 'end':
-                                return _context3.stop();
+                                return _context.stop();
                         }
                     }
-                }, _callee3, this, [[26, 45]]);
+                }, _callee, this, [[28, 53]]);
             }));
 
             function run(_x) {
@@ -334,22 +320,32 @@ var Runner = function () {
     }, {
         key: 'end',
         value: function () {
-            var _ref4 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee4() {
-                var failures = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
-                return _regenerator2.default.wrap(function _callee4$(_context4) {
+            var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2() {
+                var failures = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+                var inWatchMode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.inWatchMode;
+                var sendProcessEvent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+                return _regenerator2.default.wrap(function _callee2$(_context2) {
                     while (1) {
-                        switch (_context4.prev = _context4.next) {
+                        switch (_context2.prev = _context2.next) {
                             case 0:
-                                if (!this.hasSessionID) {
-                                    _context4.next = 4;
+                                if (!(this.hasSessionID && !inWatchMode)) {
+                                    _context2.next = 4;
                                     break;
                                 }
 
                                 global.browser.options.isWDIO = false;
-                                _context4.next = 4;
+                                _context2.next = 4;
                                 return this.endSession();
 
                             case 4:
+                                if (sendProcessEvent) {
+                                    _context2.next = 6;
+                                    break;
+                                }
+
+                                return _context2.abrupt('return');
+
+                            case 6:
 
                                 process.send({
                                     event: 'runner:end',
@@ -358,20 +354,97 @@ var Runner = function () {
                                     specs: this.specs
                                 });
 
-                            case 5:
+                            case 7:
                             case 'end':
-                                return _context4.stop();
+                                return _context2.stop();
                         }
                     }
-                }, _callee4, this);
+                }, _callee2, this);
             }));
 
-            function end(_x4) {
-                return _ref4.apply(this, arguments);
+            function end() {
+                return _ref2.apply(this, arguments);
             }
 
             return end;
         }()
+
+        /**
+         * run watcher
+         */
+
+    }, {
+        key: 'runWatchMode',
+        value: function runWatchMode(cid, config, specs) {
+            var _this2 = this;
+
+            this.gaze = new _gaze2.default(specs, { interval: 1000 });
+
+            console.log(WATCH_NOTIFICATION);
+            this.gaze.on('changed', function () {
+                var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(filepath) {
+                    var failures;
+                    return _regenerator2.default.wrap(function _callee3$(_context3) {
+                        while (1) {
+                            switch (_context3.prev = _context3.next) {
+                                case 0:
+                                    if (!_this2.isRunning) {
+                                        _context3.next = 3;
+                                        break;
+                                    }
+
+                                    _this2.fileTriggeredWhileRunning = filepath;
+                                    return _context3.abrupt('return');
+
+                                case 3:
+
+                                    /**
+                                     * check if file is in require.cache
+                                     * this is required to run specs multiple times
+                                     */
+                                    if (require.cache[require.resolve(filepath)]) {
+                                        delete require.cache[require.resolve(filepath)];
+                                    }
+
+                                    console.log('change detected, running ...');
+                                    _this2.isRunning = true;
+                                    _context3.next = 8;
+                                    return _this2.framework.run(cid, config, [filepath], _this2.caps);
+
+                                case 8:
+                                    failures = _context3.sent;
+                                    _context3.next = 11;
+                                    return _this2.end(failures, true);
+
+                                case 11:
+
+                                    setTimeout(function () {
+                                        _this2.isRunning = false;
+                                        console.log(WATCH_NOTIFICATION);
+
+                                        /**
+                                         * retrigger onchange event if user has saved file while test
+                                         * was running
+                                         */
+                                        if (_this2.fileTriggeredWhileRunning) {
+                                            _this2.gaze.emit('changed', _this2.fileTriggeredWhileRunning);
+                                            _this2.fileTriggeredWhileRunning = null;
+                                        }
+                                    }, 500);
+
+                                case 12:
+                                case 'end':
+                                    return _context3.stop();
+                            }
+                        }
+                    }, _callee3, _this2);
+                }));
+
+                return function (_x5) {
+                    return _ref3.apply(this, arguments);
+                };
+            }());
+        }
     }, {
         key: 'addTestDetails',
         value: function addTestDetails(payload) {
@@ -379,35 +452,36 @@ var Runner = function () {
                 payload.title = this.currentTest.title;
                 payload.uid = this.currentTest.uid || this.currentTest.title;
                 payload.parent = this.currentTest.parent;
+                payload.parentUid = this.currentTest.parentUid || this.currentTest.parent;
             }
             return payload;
         }
     }, {
         key: 'addCommandHooks',
         value: function addCommandHooks(config) {
-            var _this2 = this;
+            var _this3 = this;
 
             config.beforeCommand.push(function (command, args) {
                 var payload = {
                     event: 'runner:beforecommand',
-                    cid: _this2.cid,
-                    specs: _this2.specs,
+                    cid: _this3.cid,
+                    specs: _this3.specs,
                     command: command,
                     args: args
                 };
-                process.send(_this2.addTestDetails(payload));
+                process.send(_this3.addTestDetails(payload));
             });
             config.afterCommand.push(function (command, args, result, err) {
                 var payload = {
                     event: 'runner:aftercommand',
-                    cid: _this2.cid,
-                    specs: _this2.specs,
+                    cid: _this3.cid,
+                    specs: _this3.specs,
                     command: command,
                     args: args,
                     result: result,
                     err: err
                 };
-                process.send(_this2.addTestDetails(payload));
+                process.send(_this3.addTestDetails(payload));
             });
         }
     }, {
@@ -423,8 +497,13 @@ var Runner = function () {
                 return;
             }
 
+            this.end(1, false, !this.inWatchMode);
             global.browser.removeAllListeners();
-            this.end(1);
+            process.removeAllListeners();
+
+            if (this.gaze) {
+                this.gaze.close();
+            }
         }
     }, {
         key: 'initialiseFramework',
@@ -517,7 +596,7 @@ var Runner = function () {
     }, {
         key: 'initialisePlugins',
         value: function initialisePlugins(config) {
-            if ((0, _typeof3.default)(config.plugins) !== 'object') {
+            if (typeof config.plugins !== 'object') {
                 return;
             }
 
@@ -587,7 +666,7 @@ var Runner = function () {
                     /**
                      * allow custom services
                      */
-                    if ((typeof serviceName === 'undefined' ? 'undefined' : (0, _typeof3.default)(serviceName)) === 'object') {
+                    if (typeof serviceName === 'object') {
                         this.configParser.addService(serviceName);
                         continue;
                     }
@@ -618,6 +697,26 @@ var Runner = function () {
                     }
                 }
             }
+        }
+
+        /**
+         * run before/after session hook
+         */
+
+    }, {
+        key: 'runHook',
+        value: function runHook(hookName, config, caps, specs) {
+            var catchFn = function catchFn(e) {
+                return console.error('Error in ' + hookName + ': ' + e.stack);
+            };
+
+            return _promise2.default.all(config[hookName].map(function (hook) {
+                try {
+                    return hook(config, caps, specs);
+                } catch (e) {
+                    return catchFn(e);
+                }
+            })).catch(catchFn);
         }
     }]);
     return Runner;

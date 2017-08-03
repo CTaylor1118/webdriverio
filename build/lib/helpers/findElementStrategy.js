@@ -44,7 +44,7 @@ var findStrategy = function findStrategy() {
     // check value type
     // use id strategy if value starts with # and doesnt contain any other CSS selector-relevant character
     // regex to match ids from http://stackoverflow.com/questions/18938390/regex-to-match-ids-in-a-css-file
-    if (value.search(/^#-?[_a-zA-Z]+[_a-zA-Z0-9-]*$/) > -1) {
+    if (value.search(/^#-?[_a-zA-Z0-9.:/-]+[_a-zA-Z0-9-]*$/) > -1) {
         using = 'id';
         value = value.slice(1);
 
@@ -80,7 +80,7 @@ var findStrategy = function findStrategy() {
         // class name mobile selector
         // for iOS = UIA...
         // for Android = android.widget
-    } else if (value.slice(0, 3) === 'UIA' || value.slice(0, 14).toLowerCase() === 'android.widget') {
+    } else if (value.slice(0, 3) === 'UIA' || value.slice(0, 15) === 'XCUIElementType' || value.slice(0, 14).toLowerCase() === 'android.widget') {
         using = 'class name';
 
         // use tag name strategy if value contains a tag

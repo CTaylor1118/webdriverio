@@ -105,6 +105,11 @@ var RequestHandler = function () {
                 throw new _ErrorHandler.RuntimeError(101);
             }
 
+            // Add query parameters to request options if it is an object
+            if (typeof this.defaultOptions.queryParams === 'object') {
+                newOptions.qs = this.defaultOptions.queryParams;
+            }
+
             newOptions.uri = _url2.default.parse(this.defaultOptions.protocol + '://' + this.defaultOptions.hostname + ':' + this.defaultOptions.port + (requestOptions.gridCommand ? this.gridApiStartPath : this.startPath) + requestOptions.path.replace(':sessionId', this.sessionID || ''));
 
             // send authentication credentials only when creating new session
@@ -136,6 +141,8 @@ var RequestHandler = function () {
                     'Content-Type': 'application/json; charset=UTF-8',
                     'Content-Length': Buffer.byteLength((0, _stringify2.default)(data), 'UTF-8')
                 });
+            } else if (requestOptions.method === 'POST') {
+                newOptions.json = {};
             }
 
             newOptions.timeout = this.defaultOptions.connectionRetryTimeout;
@@ -176,14 +183,14 @@ var RequestHandler = function () {
             });
 
             return this.request(fullRequestOptions, this.defaultOptions.connectionRetryCount).then(function (_ref) {
-                var body = _ref.body;
-                var response = _ref.response;
+                var body = _ref.body,
+                    response = _ref.response;
 
                 /**
                  * if no session id was set before we've called the init command
                  */
                 if (_this.sessionID === null && requestOptions.requiresSession !== false) {
-                    _this.sessionID = body.sessionId;
+                    _this.sessionID = body.sessionId || body.value.sessionId;
 
                     _this.eventHandler.emit('init', {
                         sessionID: _this.sessionID,
@@ -223,14 +230,14 @@ var RequestHandler = function () {
         value: function request(fullRequestOptions, totalRetryCount) {
             var _this2 = this;
 
-            var retryCount = arguments.length <= 2 || arguments[2] === undefined ? 0 : arguments[2];
+            var retryCount = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
 
             return new _promise2.default(function (resolve, reject) {
                 (0, _request3.default)(fullRequestOptions, function (err, response, body) {
                     /**
                      * Resolve with a healthy response
                      */
-                    if (!err && body && body.status === 0) {
+                    if (!err && body && (body.status === 0 || body.value && !body.status && !(body.value.error || body.value.stackTrace))) {
                         return resolve({ body: body, response: response });
                     }
 
@@ -265,10 +272,11 @@ var RequestHandler = function () {
                     };
 
                     if (body) {
+                        var errorCode = _constants.ERROR_CODES[body.status] || _constants.ERROR_CODES[body.value.error] || _constants.ERROR_CODES[-1];
                         var error = {
-                            status: body.status,
-                            type: _constants.ERROR_CODES[body.status] ? _constants.ERROR_CODES[body.status].id : 'unknown',
-                            message: _constants.ERROR_CODES[body.status] ? _constants.ERROR_CODES[body.status].message : 'unknown',
+                            status: body.status || errorCode.status || -1,
+                            type: errorCode ? errorCode.id : 'unknown',
+                            message: errorCode ? errorCode.message : 'unknown',
                             orgStatusMessage: body.value ? body.value.message : ''
                         };
                         var screenshot = body.value && body.value.screen;
@@ -291,9 +299,9 @@ var RequestHandler = function () {
                         } else {
                             _error = new _ErrorHandler.RuntimeError({
                                 status: -1,
-                                type: 'ECONNREFUSED',
+                                type: err.code || 'ECONNREFUSED',
                                 message: 'Couldn\'t connect to selenium server',
-                                orgStatusMessage: 'Couldn\'t connect to selenium server'
+                                orgStatusMessage: err.message
                             });
                         }
 

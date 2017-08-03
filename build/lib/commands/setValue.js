@@ -35,7 +35,7 @@ var setValue = function setValue(selector, value) {
     * Send a sequence of key strokes to an element (clears value before). You can also use
     * unicode characters like Left arrow or Back space. WebdriverIO will take care of
     * translating them into unicode characters. You’ll find all supported characters
-    * [here](https://w3c.github.io/webdriver/webdriver-spec.html#dfn-character-types).
+    * [here](https://w3c.github.io/webdriver/webdriver-spec.html#keyboard-actions).
     * To do that, the value has to correspond to a key from the table.
     *
     * <example>

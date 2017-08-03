@@ -40,8 +40,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  *
  * @alias browser.scroll
  * @param {String=}  selector  element to scroll to
- * @param {Number}   xoffset   x offset to scroll to
- * @param {Number}   yoffset   y offset to scroll to
+ * @param {Number=}   xoffset   x offset to scroll to
+ * @param {Number=}   yoffset   y offset to scroll to
  * @uses protocol/element, protocol/elementIdLocation, protocol/touchScroll, protocol/execute
  * @type utility
  *

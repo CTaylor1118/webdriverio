@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.default = hideDeviceKeyboard;
 /**
  *
  * Hide the keyboard.
@@ -21,14 +22,14 @@ Object.defineProperty(exports, "__esModule", {
  *
  * @param {String} strategy  desired strategy to close keyboard ('tapOutside' or 'pressKey')
  *
- * @see  https://github.com/appium/appium/blob/master/docs/en/appium-bindings.md#hide-keyboard-ios-only
+ * @see  https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/appium-bindings.md#hide-keyboard-ios-only
  * @type mobile
  * @for ios, android
  *
  */
 
-var hideDeviceKeyboard = function hideDeviceKeyboard() {
-    var strategy = arguments.length <= 0 || arguments[0] === undefined ? 'tapOutside' : arguments[0];
+function hideDeviceKeyboard() {
+    var strategy = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'tapOutside';
     var key = arguments[1];
 
     var args = { strategy: strategy };
@@ -41,7 +42,5 @@ var hideDeviceKeyboard = function hideDeviceKeyboard() {
         path: '/session/:sessionId/appium/device/hide_keyboard',
         method: 'POST'
     }, args);
-};
-
-exports.default = hideDeviceKeyboard;
+}
 module.exports = exports['default'];

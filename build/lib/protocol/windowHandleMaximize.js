@@ -16,11 +16,21 @@ Object.defineProperty(exports, "__esModule", {
  */
 
 var windowHandleMaximize = function windowHandleMaximize() {
-    var windowHandle = arguments.length <= 0 || arguments[0] === undefined ? 'current' : arguments[0];
+    var _this = this;
 
-    return this.requestHandler.create({
+    var windowHandle = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'current';
+
+    var requestOptions = {
         path: '/session/:sessionId/window/' + windowHandle + '/maximize',
         method: 'POST'
+    };
+
+    return this.requestHandler.create(requestOptions).catch(function () {
+        /**
+         * use W3C path if old path failed
+         */
+        requestOptions.path = '/session/:sessionId/window/maximize';
+        return _this.requestHandler.create(requestOptions);
     });
 };
 

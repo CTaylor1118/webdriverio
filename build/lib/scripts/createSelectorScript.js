@@ -28,7 +28,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @return {String}                              stringified function
  */
 function getFn(fn) {
-    var inMultibrowserMode = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+    var inMultibrowserMode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
     if (typeof fn === 'function' || inMultibrowserMode && fn.indexOf('function (') === 0) {
         // Handle function script
@@ -45,8 +45,8 @@ function getFn(fn) {
  * @return {String}                             list of args
  */
 function getArgs() {
-    var args = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
-    var inMultibrowserMode = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+    var args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    var inMultibrowserMode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
     var strArgs = [];
 
@@ -67,7 +67,7 @@ function getArgs() {
  * @param {Array.<String>} selectors - the selectors to resolve and pass to fn, each in its own array
  * @param {Array} args - the arguments to pass to fn (after resolved selectors)
  * @param {Function} callback
- * @returns {string}
+ * @return {String} The script to execute in the browser, as a string.
  */
 var createSelectorScript = function createSelectorScript(fn, selectors, args) {
     var strArgs = [];
@@ -114,7 +114,7 @@ var createSelectorScript = function createSelectorScript(fn, selectors, args) {
  * @param {Function} fn - the function to execute client side that will receive the resolved selectors
  * @param {Array.<String>} sArr - a series of usage, value pairs from find-element-strategy
  * @param {Array} args - any other arguments to pass to fn
- * @returns {*} the return value of fn
+ * @return {*} the return value of fn
  * @example
  * var helper = require('./executeClientSideSelector');
  * // Execute in the browser

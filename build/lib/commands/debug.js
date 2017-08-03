@@ -21,7 +21,7 @@ var _ErrorHandler = require('../utils/ErrorHandler');
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var debug = function debug() {
-    var commandTimeout = arguments.length <= 0 || arguments[0] === undefined ? 5000 : arguments[0];
+    var commandTimeout = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 5000;
 
     var _this = this;
 
@@ -47,37 +47,38 @@ var debug = function debug() {
         }
 
         commandIsRunning = true;
+        var result = void 0;
         if (typeof global.wdioSync === 'function') {
             return global.wdioSync(function () {
                 try {
-                    _vm2.default.runInThisContext('global._result = (function () { return ' + cmd + ' }).apply(this)');
+                    result = _vm2.default.runInThisContext(cmd);
                 } catch (e) {
                     commandIsRunning = false;
                     return callback(e);
                 }
 
-                callback(null, global._result);
+                callback(null, result);
                 commandIsRunning = false;
             })();
         }
 
         context.browser = _this;
         try {
-            _vm2.default.runInThisContext('global._result = (function () { return ' + cmd + ' }).apply(this)');
+            result = _vm2.default.runInThisContext(cmd);
         } catch (e) {
             commandIsRunning = false;
             return callback(e);
         }
 
-        if (!global._result || typeof global._result.then !== 'function') {
+        if (!result || typeof result.then !== 'function') {
             commandIsRunning = false;
-            return callback(null, global._result);
+            return callback(null, result);
         }
 
         var timeout = setTimeout(function () {
             return callback(new _ErrorHandler.RuntimeError('Command execution timed out'));
         }, commandTimeout);
-        global._result.then(function (res) {
+        result.then(function (res) {
             commandIsRunning = false;
             clearTimeout(timeout);
             return callback(null, res);
@@ -111,7 +112,7 @@ var debug = function debug() {
     * interface that will allow you to try out certain commands, find elements and test actions on
     * them.
     *
-    * ![WebdriverIO REPL][http://webdriver.io/images/repl.gif]
+    * [![WebdriverIO REPL](http://webdriver.io/images/repl.gif)](http://webdriver.io/images/repl.gif)
     *
     * If you run the WDIO testrunner make sure you increase the timeout property of your test framework
     * your are using (e.g. Mocha or Jasmine) in order to prevent the continuation due to a test timeout.

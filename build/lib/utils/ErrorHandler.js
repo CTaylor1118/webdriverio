@@ -3,11 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.isTimeoutError = exports.WaitUntilTimeoutError = exports.WaitForTimeoutError = exports.RuntimeError = exports.ProtocolError = exports.CommandError = exports.ErrorHandler = undefined;
-
-var _typeof2 = require('babel-runtime/helpers/typeof');
-
-var _typeof3 = _interopRequireDefault(_typeof2);
+exports.WaitUntilTimeoutError = exports.WaitForTimeoutError = exports.RuntimeError = exports.ProtocolError = exports.CommandError = exports.ErrorHandler = undefined;
 
 var _getPrototypeOf = require('babel-runtime/core-js/object/get-prototype-of');
 
@@ -39,7 +35,7 @@ var ErrorHandler = function (_Error) {
     function ErrorHandler(type, msg, details) {
         (0, _classCallCheck3.default)(this, ErrorHandler);
 
-        var _this = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(ErrorHandler).call(this));
+        var _this = (0, _possibleConstructorReturn3.default)(this, (ErrorHandler.__proto__ || (0, _getPrototypeOf2.default)(ErrorHandler)).call(this));
 
         Error.captureStackTrace(_this, _this.constructor);
 
@@ -63,7 +59,7 @@ var ErrorHandler = function (_Error) {
             _this.message = type;
         }
 
-        if ((0, _typeof3.default)(_this.message) === 'object') {
+        if (typeof _this.message === 'object') {
             var seleniumStack = _this.message;
 
             if (seleniumStack.screenshot) {
@@ -72,7 +68,7 @@ var ErrorHandler = function (_Error) {
             }
 
             if (seleniumStack.message && seleniumStack.type && seleniumStack.status) {
-                if (seleniumStack.orgStatusMessage && seleniumStack.orgStatusMessage.match(/"errorMessage":"NoSuchElement"/)) {
+                if (typeof seleniumStack.orgStatusMessage === 'string' && seleniumStack.orgStatusMessage.match(/"errorMessage":"NoSuchElement"/)) {
                     seleniumStack.type = 'NoSuchElement';
                     seleniumStack.status = 7;
                     seleniumStack.message = _constants.ERROR_CODES['7'].message;
@@ -81,7 +77,7 @@ var ErrorHandler = function (_Error) {
                 _this.message = seleniumStack.message + ' (' + seleniumStack.type + ':' + seleniumStack.status + ')';
             }
 
-            if (seleniumStack.orgStatusMessage) {
+            if (typeof seleniumStack.orgStatusMessage === 'string') {
                 var reqPos = seleniumStack.orgStatusMessage.indexOf(',"request"');
                 var problem = '';
 
@@ -146,20 +142,10 @@ var WaitUntilTimeoutError = function WaitUntilTimeoutError(msg) {
     return new ErrorHandler('WaitUntilTimeoutError', msg);
 };
 
-/**
- * Check if current error is caused by timeout
- * @param {Object} err
- * @returns {Boolean}
- */
-var isTimeoutError = function isTimeoutError(e) {
-    return e.message === 'Promise was rejected with the following reason: timeout';
-};
-
 exports.ErrorHandler = ErrorHandler;
 exports.CommandError = CommandError;
 exports.ProtocolError = ProtocolError;
 exports.RuntimeError = RuntimeError;
 exports.WaitForTimeoutError = WaitForTimeoutError;
 exports.WaitUntilTimeoutError = WaitUntilTimeoutError;
-exports.isTimeoutError = isTimeoutError;
 exports.default = ErrorHandler;

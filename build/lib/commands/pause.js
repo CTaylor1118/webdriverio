@@ -33,7 +33,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 
 var pause = function pause() {
-    var milliseconds = arguments.length <= 0 || arguments[0] === undefined ? 1000 : arguments[0];
+    var milliseconds = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1000;
 
     return new _promise2.default(function (resolve) {
         return setTimeout(resolve, milliseconds);

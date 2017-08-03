@@ -4,10 +4,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _typeof2 = require('babel-runtime/helpers/typeof');
-
-var _typeof3 = _interopRequireDefault(_typeof2);
-
 var _getViewportSize = require('../scripts/getViewportSize');
 
 var _getViewportSize2 = _interopRequireDefault(_getViewportSize);
@@ -52,7 +48,7 @@ var setViewportSize = function setViewportSize(size, type) {
     /**
      * parameter check
      */
-    if ((typeof size === 'undefined' ? 'undefined' : (0, _typeof3.default)(size)) !== 'object' || typeof size.width !== 'number' || typeof size.height !== 'number' || typeof type !== 'undefined' && typeof type !== 'boolean') {
+    if (typeof size !== 'object' || typeof size.width !== 'number' || typeof size.height !== 'number' || typeof type !== 'undefined' && typeof type !== 'boolean') {
         throw new _ErrorHandler.CommandError('number or type of arguments don\'t agree with setViewportSize command');
     }
 
@@ -68,7 +64,7 @@ var setViewportSize = function setViewportSize(size, type) {
 var _setViewportSize = function _setViewportSize(size) {
     var _this = this;
 
-    var retryNo = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+    var retryNo = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
     /**
      * get window size

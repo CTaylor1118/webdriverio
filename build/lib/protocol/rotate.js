@@ -3,6 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.default = rotate;
 /**
  *
  * Perform a rotation gesture centered on the specified element.
@@ -25,19 +26,17 @@ Object.defineProperty(exports, "__esModule", {
  *
  */
 
-var rotate = function rotate() {
-    var x = arguments.length <= 0 || arguments[0] === undefined ? 0 : arguments[0];
-    var y = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
-    var duration = arguments.length <= 2 || arguments[2] === undefined ? 1 : arguments[2];
-    var radius = arguments.length <= 3 || arguments[3] === undefined ? 0 : arguments[3];
-    var rotation = arguments.length <= 4 || arguments[4] === undefined ? Math.PI : arguments[4];
-    var touchCount = arguments.length <= 5 || arguments[5] === undefined ? 2 : arguments[5];
+function rotate() {
+    var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+    var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+    var duration = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+    var radius = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+    var rotation = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : Math.PI;
+    var touchCount = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 2;
 
     return this.requestHandler.create({
         path: '/session/:sessionId/appium/device/rotate',
         method: 'POST'
     }, { x: x, y: y, duration: duration, radius: radius, rotation: rotation, touchCount: touchCount });
-};
-
-exports.default = rotate;
+}
 module.exports = exports['default'];

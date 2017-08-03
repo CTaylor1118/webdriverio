@@ -26,7 +26,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
         console.log(browser.getTitle()); // outputs: "Google"
 
         browser.newWindow('http://webdriver.io', 'WebdriverIO window', 'width=420,height=230,resizable,scrollbars=yes,status=1')
-        console.log(browser.getTitle()); // outputs: "WebdriverIO - Selenium 2.0 javascript bindings for nodejs"
+        console.log(browser.getTitle()); // outputs: "WebdriverIO - WebDriver bindings for Node.js"
 
         browser.close()
         console.log(browser.getTitle()); // outputs: "Google"
@@ -45,8 +45,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var newWindow = function newWindow(url) {
     var _this = this;
 
-    var windowName = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
-    var windowFeatures = arguments.length <= 2 || arguments[2] === undefined ? '' : arguments[2];
+    var windowName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+    var windowFeatures = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
 
     /*!
      * parameter check

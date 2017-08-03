@@ -77,7 +77,7 @@ var getText = function getText(selector) {
            // "Lorem ipsum dolor sit amet,consetetur sadipscing elitr"
    
            var spanText = browser.getText('span');
-           console.log(text);
+           console.log(spanText);
            // outputs "" (empty string) since element is not interactable
        });
    
@@ -91,7 +91,7 @@ var getText = function getText(selector) {
     *
     * @alias browser.getText
     * @param   {String}           selector   element with requested text
-    * @returns {String|String[]}             content of selected element (all HTML tags are removed)
+    * @return {String|String[]}             content of selected element (all HTML tags are removed)
     * @uses protocol/elements, protocol/elementIdText
     * @type property
     *

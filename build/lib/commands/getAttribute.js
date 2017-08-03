@@ -85,14 +85,14 @@ var getAttribute = function getAttribute(selector, attributeName) {
    
            // if your selector matches multiple elements it returns an array of results
            var allInputs = $$('.loginForm input')
-           console.log(allInputs.getAttribute('name')) // outputs: ['name', 'password', 'submit']
+           console.log(allInputs.map(function(el) { return el.getAttribute('name'); })) // outputs: ['name', 'password', 'submit']
        })
     * </example>
     *
     * @alias browser.getAttribute
     * @param {String} selector      element with requested attribute
     * @param {String} attributeName requested attribute
-    * @returns {String|String[]|null} The value of the attribute(s), or null if it is not set on the element.
+    * @return {String|String[]|null} The value of the attribute(s), or null if it is not set on the element.
     * @uses protocol/elements, protocol/elementIdAttribute
     * @type property
     *
